@@ -15,10 +15,14 @@ def fetch_solution():
 
 def fetch_problem(problem_id):
     resource_url = base_url + "problem/" + str(problem_id) + "/package.zip?secret=JUDGE_SECRET"
-    local_path = "problems/" + str(problem_id) + ".zip"
-    _download_zip(resource_url, local_path)
-    _unzip(local_path, "problems/" + str(problem_id))
-    os.remove(local_path)
+    local_path = "../problems/" + str(problem_id)
+    local_path = os.path.join(os.path.dirname(__file__), local_path)
+    local_path = os.path.abspath(local_path)
+    zip_file = local_path + ".zip"
+    print(local_path)
+    _download_zip(resource_url, zip_file)
+    _unzip(zip_file, local_path)
+    os.remove(zip_file)
 
 
 def _download_zip(url, local_path):
@@ -39,9 +43,7 @@ def _download_zip(url, local_path):
 
 def _unzip(local_path, target_path):
     zip_file = zipfile.ZipFile(local_path)
+    if not os.path.exists(target_path):
+        os.mkdir(target_path)
     for name in zip_file.namelist():
         zip_file.extract(name, target_path)
-
-
-if __name__ == "__main__":
-    fetch_problem(1)
