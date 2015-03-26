@@ -12,3 +12,4 @@ class TestRemote(unittest.TestCase):
     def test_download_zip(self):
         from oj import remote
         remote.fetch_problem(1)
+        remote.fetch_problem(2)

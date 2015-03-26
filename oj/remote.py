@@ -1,4 +1,6 @@
 import os
+import shutil
+import json
 from urllib2 import urlopen, HTTPError, URLError
 import zipfile
 
@@ -10,7 +12,8 @@ base_url = "http://localhost:9000/judge/"
 
 
 def fetch_solution():
-    pass
+    fetch_url = base_url + "fetch?secret=JUDGE_SECRET"
+    return _fetch_json(fetch_url)
 
 
 def fetch_problem(problem_id):
@@ -25,11 +28,28 @@ def fetch_problem(problem_id):
     os.remove(zip_file)
 
 
+def _fetch_json(url):
+    result = None
+    try:
+        response = urlopen(url, data="")
+        data = response.read()
+        result = json.loads(data)
+    # handle errors
+    except HTTPError, e:
+        print "HTTP Error:", e.code, url
+    except URLError, e:
+        print "URL Error:", e.reason, url
+    return result
+
+
 def _download_zip(url, local_path):
     try:
         f = urlopen(url, data="")
         print "downloading " + url
-
+        dir = os.path.dirname(local_path)
+        print("dir ", dir)
+        if not os.path.exists(dir):
+            os.mkdir(dir)
         # Open our local file for writing
         with open(local_path, "wb") as local_file:
             local_file.write(f.read())
@@ -43,7 +63,10 @@ def _download_zip(url, local_path):
 
 def _unzip(local_path, target_path):
     zip_file = zipfile.ZipFile(local_path)
-    if not os.path.exists(target_path):
+    if os.path.exists(target_path):
+        shutil.rmtree(target_path)
+        os.mkdir(target_path)
+    else:
         os.mkdir(target_path)
     for name in zip_file.namelist():
         zip_file.extract(name, target_path)
