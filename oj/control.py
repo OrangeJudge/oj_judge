@@ -1,4 +1,4 @@
-from oj import remote
+from oj import remote, problem, judge
 
 
 __author__ = "imdreamrunner"
@@ -7,10 +7,13 @@ __email__ = "imdreamrunner@gmail.com"
 
 def tick():
     fetched = remote.fetch_solution()
+    print(fetched)
     if fetched is None:
         return
     if fetched["status"] != 0:
         return
-    print(fetched)
+    solution_data = fetched["data"]
+    problem_data = problem.get_problem(solution_data["problem"], solution_data["problem_hash"])
+    judge.compile_solution(solution_data["language"], solution_data["code"])
 
 tick()
