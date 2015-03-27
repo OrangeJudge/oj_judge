@@ -63,3 +63,6 @@ target/
 
 # Problem Data
 /problems
+
+# Temp Share Folder
+/oj/judge/share

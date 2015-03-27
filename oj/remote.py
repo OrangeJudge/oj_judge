@@ -3,12 +3,13 @@ import shutil
 import json
 from urllib2 import urlopen, HTTPError, URLError
 import zipfile
+from config import CONFIG
 
 __author__ = "imdreamrunner"
 __email__ = "imdreamrunner@gmail.com"
 
 
-base_url = "http://localhost:9000/judge/"
+base_url = CONFIG["server"] + "/judge/"
 
 
 def fetch_solution():
