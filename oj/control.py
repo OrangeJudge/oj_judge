@@ -14,6 +14,7 @@ def tick():
         return
     solution_data = fetched["data"]
     problem_data = problem.get_problem(solution_data["problem"], solution_data["problem_hash"])
-    judge.compile_solution(solution_data["language"], solution_data["code"])
+    compile_status, compile_error = judge.compile_solution(solution_data["language"], solution_data["code"])
+    print(compile_status, compile_error)
 
 tick()

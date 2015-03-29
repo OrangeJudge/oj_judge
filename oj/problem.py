@@ -6,7 +6,7 @@ __author__ = "imdreamrunner"
 __email__ = "imdreamrunner@gmail.com"
 
 PROBLEM_BASE_PATH = os.path.abspath(os.path.realpath(__file__) + "/../../problems/")
-STORE_FILE_PATH = PROBLEM_BASE_PATH + "problem_hash.json"
+STORE_FILE_PATH = PROBLEM_BASE_PATH + "/problem_hash.json"
 
 
 def _store_hash(problem_id, hash_code):
