@@ -1,15 +1,14 @@
 #!/bin/bash
+SHARE_DIR="$1"
 function remove {
   local filename
-  filename="$1"
+  filename="$SHARE_DIR/$1"
   if [ -f "$filename" ]; then
-    echo remove $filename
     rm "$filename"
   fi
 }
 
-cd share
+remove std.in
 remove std.out
 remove std.err
-remove main.out
 remove time.txt
