@@ -10,10 +10,12 @@ cont=$(docker run -d -v "$SHARE_DIR":/oj oj bash -c "cd /oj && { time ./main.out
 echo "start run $cont"
 code=$(timeout "$TIME_LIMIT" docker wait "$cont" || true)
 docker kill "$cont" &> /dev/null
+docker rm "$cont" &> /dev/null
+echo "finish run $cont"
 if [ -z "$code" ]; then
     echo "timeout"
+    exit 1
 else
     echo "exited: $code"
+    exit 0
 fi
-docker rm "$cont" &> /dev/null
-echo finish run
