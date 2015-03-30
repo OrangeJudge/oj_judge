@@ -1,7 +1,7 @@
 import os
 import shutil
 import json
-from urllib2 import urlopen, HTTPError, URLError
+from urllib2 import urlopen, HTTPError, URLError, Request
 import zipfile
 from config import CONFIG
 
@@ -54,7 +54,6 @@ def _download_zip(url, local_path):
         # Open our local file for writing
         with open(local_path, "wb") as local_file:
             local_file.write(f.read())
-
     # handle errors
     except HTTPError, e:
         print "HTTP Error:", e.code, url
@@ -71,3 +70,20 @@ def _unzip(local_path, target_path):
         os.mkdir(target_path)
     for name in zip_file.namelist():
         zip_file.extract(name, target_path)
+
+
+def update_status(solution_id, result, detail, time_usage=None, memory_usage=None):
+    update_package = {
+        "id": solution_id,
+        "result": result,
+        "detail": detail,
+        "time": time_usage,
+        "memory": memory_usage
+    }
+    print(json.dumps(update_package))
+    update_url = base_url + "update?secret=JUDGE_SECRET"
+    request = Request(update_url)
+    request.add_header('Content-Type', 'application/json')
+    response = urlopen(request, data=json.dumps(update_package))
+    data = response.read()
+    print(data)
