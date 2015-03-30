@@ -1,1 +1,1 @@
-docker build . -t oj
+docker build -t oj .
