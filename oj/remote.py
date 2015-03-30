@@ -11,14 +11,16 @@ __email__ = "imdreamrunner@gmail.com"
 
 base_url = CONFIG["server"] + "/judge/"
 
+judge_auth = "?judge=1&secret=JUDGE_SECRET"
+
 
 def fetch_solution():
-    fetch_url = base_url + "fetch?secret=JUDGE_SECRET"
+    fetch_url = base_url + "fetch" + judge_auth
     return _fetch_json(fetch_url)
 
 
 def fetch_problem(problem_id):
-    resource_url = base_url + "problem/" + str(problem_id) + "/package.zip?secret=JUDGE_SECRET"
+    resource_url = base_url + "problem/" + str(problem_id) + "/package.zip" + judge_auth
     local_path = "../problems/" + str(problem_id)
     local_path = os.path.join(os.path.dirname(__file__), local_path)
     local_path = os.path.abspath(local_path)
@@ -81,7 +83,7 @@ def update_status(solution_id, result, detail, time_usage=None, memory_usage=Non
         "memory": memory_usage
     }
     print(json.dumps(update_package))
-    update_url = base_url + "update?secret=JUDGE_SECRET"
+    update_url = base_url + "update" + judge_auth
     request = Request(update_url)
     request.add_header('Content-Type', 'application/json')
     response = urlopen(request, data=json.dumps(update_package))
