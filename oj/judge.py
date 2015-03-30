@@ -35,7 +35,6 @@ RUN_SCRIPT = {
 }
 
 
-
 def _write_solution(language, code):
     if os.path.exists(SHARE_PATH):
         shutil.rmtree(SHARE_PATH)
@@ -73,13 +72,20 @@ def compile_solution(language, code):
 
 def _prepare_input(problem_id, input_file_name):
     subprocess.call(["bash", JUDGE_PATH + "/remove_temp.sh", SHARE_PATH])
-    shutil.copyfile(PROBLEM_BASE_PATH + "/" + str(problem_id) + "/" + input_file_name, SHARE_PATH + "/std.in")
+    shutil.copyfile(PROBLEM_BASE_PATH + "/" + str(problem_id) + "/" + input_file_name,
+                    SHARE_PATH + "/std.in")
+
+
+def _read_answer(problem_id, answer_file_name):
+    with open(PROBLEM_BASE_PATH + "/" + str(problem_id) + "/" + answer_file_name) as f:
+        return f.read()
 
 
 def _run_once(language, time_limit, memory_limit):
     output = subprocess.call(["bash", JUDGE_PATH + "/" + RUN_SCRIPT[language], SHARE_PATH,
                               str(time_limit / 1000 + 2), str(memory_limit)])
     print("RUN CODE:", output)
+    return output == 0
 
 
 def _read_output():
@@ -98,12 +104,28 @@ def _read_output():
                 line_split = line.split("\t")
                 if line_split[0] == "user" or line_split[0] == "sys":
                     time_split = line_split[1].split("m")
-                    total_time += int(time_split[0]) * 60 * 1000 + int(float(time_split[1][:-1])*1000)
-    output_dict["time"] =  total_time
-    print(output_dict)
+                    total_time +=\
+                        int(time_split[0]) * 60 * 1000 + int(float(time_split[1][:-1])*1000)
+    output_dict["time"] = total_time
+    return output_dict
 
 
 def run_solution(language, problem_id, test_id, test_data):
     _prepare_input(problem_id, str(test_id) + ".in")
-    _run_once(language, test_data["timeLimit"], test_data["memoryLimit"])
-    _read_output()
+    is_run_finish = _run_once(language, test_data["timeLimit"], test_data["memoryLimit"])
+    if not is_run_finish:
+        return False, test_data["timeLimit"], 0, 402, "Time Limit Exceeded on Test " + str(test_id)
+    run_output = _read_output()
+    if len(run_output["err"]) > 0:
+        return False, run_output["time"], 0, 401, \
+               "Runtime Error on Test " + str(test_id) + "\n" + run_output["err"]
+    if run_output["time"] > test_data["timeLimit"]:
+        return False, run_output["time"], 0, 402, "Time Limit Exceed on Test " + str(test_id)
+    output = run_output["out"].replace("\r\n", "\n").replace("\r", "\n")
+    answer = _read_answer(problem_id, str(test_id) + ".ans")\
+        .replace("\r\n", "\n").replace("\r", "\n")
+    if output != answer:
+        print("Output" + run_output["out"])
+        print("Answer" + answer)
+        return False, run_output["time"], 0, 300, "Wrong Answer on Test " + str(test_id)
+    return True, run_output["time"], 0, None, None
