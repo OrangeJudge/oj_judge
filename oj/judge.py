@@ -96,17 +96,16 @@ def _read_output():
     if os.path.exists(SHARE_PATH + "/std.out"):
         with open(SHARE_PATH + "/std.out") as f:
             output_dict["out"] = f.read()
-    total_time = 0
     if os.path.exists(SHARE_PATH + "/time.txt"):
         with open(SHARE_PATH + "/time.txt") as f:
             time_string = f.read()
-            for line in time_string.split("\n"):
-                line_split = line.split("\t")
-                if line_split[0] == "user" or line_split[0] == "sys":
-                    time_split = line_split[1].split("m")
-                    total_time +=\
-                        int(time_split[0]) * 60 * 1000 + int(float(time_split[1][:-1])*1000)
-    output_dict["time"] = total_time
+            file_splits = time_string.strip().split("\n")
+            if len(file_splits) == 3:
+                output_dict["time"] = int((float(file_splits[0]) + float(file_splits[1])) * 1000)
+                output_dict["memory"] = int(file_splits[2])
+            else:
+                print("JUDGE ERROR")
+    print(output_dict)
     return output_dict
 
 
@@ -116,7 +115,7 @@ def run_solution(language, problem_id, test_id, test_data):
     if not is_run_finish:
         return False, test_data["timeLimit"], 0, 402, "Time Limit Exceeded on Test " + str(test_id)
     run_output = _read_output()
-    if len(run_output["err"]) > 0:
+    if "err" in run_output and len(run_output["err"]) > 0:
         return False, run_output["time"], 0, 401, \
                "Runtime Error on Test " + str(test_id) + "\n" + run_output["err"]
     if run_output["time"] > test_data["timeLimit"]:
@@ -127,5 +126,5 @@ def run_solution(language, problem_id, test_id, test_data):
     if output != answer:
         print("Output" + run_output["out"])
         print("Answer" + answer)
-        return False, run_output["time"], 0, 300, "Wrong Answer on Test " + str(test_id)
-    return True, run_output["time"], 0, None, None
+        return False, run_output["time"], run_output["memory"], 300, "Wrong Answer on Test " + str(test_id)
+    return True, run_output["time"], run_output["memory"], None, None

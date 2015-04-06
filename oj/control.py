@@ -58,6 +58,5 @@ def tick():
             all_pass = False
             break
     if all_pass:
-        total_memory = None  # Now memory is unavailable.
         remote.update_status(solution_id, 200, "Accepted", total_time, total_memory)
     return True

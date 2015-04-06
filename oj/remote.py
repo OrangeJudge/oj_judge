@@ -16,7 +16,10 @@ judge_auth = "?judge=1&secret=JUDGE_SECRET"
 
 def fetch_solution():
     fetch_url = base_url + "fetch" + judge_auth
-    return _fetch_json(fetch_url)
+    request_body = {
+        "languages": [20]
+    }
+    return _fetch_json(fetch_url, json.dumps(request_body))
 
 
 def fetch_problem(problem_id):
@@ -31,10 +34,13 @@ def fetch_problem(problem_id):
     os.remove(zip_file)
 
 
-def _fetch_json(url):
+def _fetch_json(url, data=""):
     result = None
     try:
-        response = urlopen(url, data="")
+        request = Request(url, data, {
+            "Content-type": "application/json"
+        })
+        response = urlopen(request)
         data = response.read()
         result = json.loads(data)
     # handle errors
