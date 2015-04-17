@@ -9,17 +9,16 @@ __author__ = "imdreamrunner"
 __email__ = "imdreamrunner@gmail.com"
 
 
-base_url = CONFIG["server"] + "/judge/"
+base_url = CONFIG["server"] + "/api/judge/"
 
 judge_auth = "?judge=1&secret=JUDGE_SECRET"
 
 
 def fetch_solution():
-    fetch_url = base_url + "fetch" + judge_auth
-    request_body = {
-        "languages": [20]
-    }
-    return _fetch_json(fetch_url, json.dumps(request_body))
+    supported_languages = [20]
+    language_url = "&language=".join([""] + [str(l) for l in supported_languages])
+    fetch_url = base_url + "solution" + judge_auth + language_url
+    return _fetch_json(fetch_url)
 
 
 def fetch_problem(problem_id):
@@ -34,7 +33,7 @@ def fetch_problem(problem_id):
     os.remove(zip_file)
 
 
-def _fetch_json(url, data=""):
+def _fetch_json(url, data=None):
     result = None
     try:
         request = Request(url, data, {
@@ -53,7 +52,7 @@ def _fetch_json(url, data=""):
 
 def _download_zip(url, local_path):
     try:
-        f = urlopen(url, data="")
+        f = urlopen(url)
         print "downloading " + url
         dir = os.path.dirname(local_path)
         print("dir ", dir)
@@ -82,14 +81,13 @@ def _unzip(local_path, target_path):
 
 def update_status(solution_id, result, detail, time_usage=None, memory_usage=None):
     update_package = {
-        "id": solution_id,
         "result": result,
         "detail": detail,
         "time": time_usage,
         "memory": memory_usage
     }
     print(json.dumps(update_package))
-    update_url = base_url + "update" + judge_auth
+    update_url = base_url + "solution/" + str(solution_id) + "/update" + judge_auth
     request = Request(update_url)
     request.add_header('Content-Type', 'application/json')
     response = urlopen(request, data=json.dumps(update_package))
