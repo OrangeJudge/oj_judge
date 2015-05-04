@@ -30,7 +30,7 @@ COMPILED_FILE = {
 
 
 RUN_SCRIPT = {
-    10: "run_c.sh",
+    10: "run_cpp.sh",
     20: "run_cpp.sh"
 }
 
@@ -124,7 +124,7 @@ def run_solution(language, problem_id, test_id, test_data):
     answer = _read_answer(problem_id, str(test_id) + ".ans")\
         .replace("\r\n", "\n").replace("\r", "\n")
     if output != answer:
-        print("Output" + run_output["out"])
-        print("Answer" + answer)
+        print("Output: " + run_output["out"])
+        print("Answer: " + answer)
         return False, run_output["time"], run_output["memory"], 300, "Wrong Answer on Test " + str(test_id)
     return True, run_output["time"], run_output["memory"], None, None

@@ -15,7 +15,7 @@ judge_auth = "?judge=1&secret=JUDGE_SECRET"
 
 
 def fetch_solution():
-    supported_languages = [20]
+    supported_languages = [10, 20]
     language_url = "&language=".join([""] + [str(l) for l in supported_languages])
     fetch_url = base_url + "solution" + judge_auth + language_url
     return _fetch_json(fetch_url)
