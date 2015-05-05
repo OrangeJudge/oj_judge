@@ -50,6 +50,7 @@ def tick():
         if "totalTimeLimit" in problem_data and total_time > problem_data["totalTimeLimit"]:
             remote.update_status(solution_id, 402, "Time Limit Exceed on Test " + str(test),
                                  total_time, total_memory)
+            return
         if not is_pass:
             if error_code != 402:
                 # Only return total time when error is Time Limit Exceed.
