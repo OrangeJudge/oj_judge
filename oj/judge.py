@@ -13,25 +13,29 @@ SHARE_PATH = JUDGE_PATH + "/share"
 
 SOURCE_FILE = {
     10: "main.c",
-    20: "main.cc"
+    20: "main.cc",
+    30: "Main.java"
 }
 
 
 COMPILE_SCRIPT = {
     10: "compile_c.sh",
-    20: "compile_cpp.sh"
+    20: "compile_cpp.sh",
+    30: "compile_java.sh"
 }
 
 
 COMPILED_FILE = {
     10: "main.out",
-    20: "main.out"
+    20: "main.out",
+    30: "Main.class"
 }
 
 
 RUN_SCRIPT = {
     10: "run_cpp.sh",
-    20: "run_cpp.sh"
+    20: "run_cpp.sh",
+    30: "run_java.sh"
 }
 
 
@@ -116,6 +120,8 @@ def run_solution(language, problem_id, test_id, test_data):
         return False, test_data["timeLimit"], 0, 402, "Time Limit Exceeded on Test " + str(test_id)
     run_output = _read_output()
     if "err" in run_output and len(run_output["err"]) > 0:
+        if "time" not in run_output:
+            run_output["time"] = None
         return False, run_output["time"], 0, 401, \
                "Runtime Error on Test " + str(test_id) + "\n" + run_output["err"]
     if run_output["time"] > test_data["timeLimit"]:

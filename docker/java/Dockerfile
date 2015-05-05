@@ -8,8 +8,8 @@
 # Pull base image.
 FROM ubuntu:trusty
 
-# Install add-apt-repository
-RUN apt-get update && apt-get install python-software-properties
+# Install add-apt-repository & time
+RUN apt-get update && apt-get install -y software-properties-common python-software-properties time
 
 # Install Java.
 RUN \

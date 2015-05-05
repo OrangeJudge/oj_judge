@@ -15,7 +15,7 @@ judge_auth = "?judge=1&secret=JUDGE_SECRET"
 
 
 def fetch_solution():
-    supported_languages = [10, 20]
+    supported_languages = [10, 20, 30]
     language_url = "&language=".join([""] + [str(l) for l in supported_languages])
     fetch_url = base_url + "solution" + judge_auth + language_url
     return _fetch_json(fetch_url)
@@ -54,17 +54,17 @@ def _download_zip(url, local_path):
     try:
         f = urlopen(url)
         print "downloading " + url
-        dir = os.path.dirname(local_path)
-        print("dir ", dir)
-        if not os.path.exists(dir):
-            os.mkdir(dir)
+        download_dir = os.path.dirname(local_path)
+        print("dir ", download_dir)
+        if not os.path.exists(download_dir):
+            os.mkdir(download_dir)
         # Open our local file for writing
         with open(local_path, "wb") as local_file:
             local_file.write(f.read())
     # handle errors
-    except HTTPError, e:
+    except HTTPError as e:
         print "HTTP Error:", e.code, url
-    except URLError, e:
+    except URLError as e:
         print "URL Error:", e.reason, url
 
 
@@ -88,8 +88,13 @@ def update_status(solution_id, result, detail, time_usage=None, memory_usage=Non
     }
     print(json.dumps(update_package))
     update_url = base_url + "solution/" + str(solution_id) + "/update" + judge_auth
-    request = Request(update_url)
-    request.add_header('Content-Type', 'application/json')
-    response = urlopen(request, data=json.dumps(update_package))
-    data = response.read()
-    print(data)
+    try:
+        request = Request(update_url)
+        request.add_header('Content-Type', 'application/json')
+        response = urlopen(request, data=json.dumps(update_package))
+        data = response.read()
+        print(data)
+    except HTTPError as e:
+        print "HTTP Error:", e.code, update_url
+    except URLError as e:
+        print "URL Error:", e.reason, update_url
