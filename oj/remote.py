@@ -9,7 +9,7 @@ __author__ = "imdreamrunner"
 __email__ = "imdreamrunner@gmail.com"
 
 
-base_url = CONFIG["server"] + "/api/judge/"
+base_url = CONFIG["server"] + "/api/v1/judge/"
 
 judge_auth = "?judge=1&secret=JUDGE_SECRET"
 
